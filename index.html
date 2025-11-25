@@ -4,6 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Étudiants</title>
+    <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass: rgba(255,255,255,0.03)}
+    *{box-sizing:border-box;font-family:Inter, system-ui, Arial}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071126 0%, #0b1220 100%);color:#e6eef6;padding:28px}
+    .wrap{max-width:1000px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    button, select, input{background:var(--card);border:1px solid rgba(255,255,255,0.04);color:inherit;padding:8px 10px;border-radius:8px}
+    input[type=search]{width:260px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:12px;padding:16px;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:14px}
+    th{cursor:pointer;user-select:none}
+    tr:hover td{background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent)}
+    .tag{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px}
+    .tag.m{background:rgba(6,182,212,0.12);color:var(--accent)}
+    .tag.f{background:rgba(99,102,241,0.12);color:#6366f1}
+    .actions{display:flex;gap:6px}
+    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+    .modal-back.show{opacity:1;pointer-events:auto}
+    .modal{background:var(--card);width:540px;border-radius:12px;padding:18px;transform:translateY(20px) scale(.98);opacity:0;transition:all .22s}
+    .modal-back.show .modal{transform:none;opacity:1}
+    .form-row{display:flex;gap:8px;margin-bottom:10px}
+    .form-row > *{flex:1}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input[type=text], input[type=number], select{width:100%}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#7dd3fc);color:#062023;border:none}
+    .btn-danger{background:transparent;border:1px solid rgba(255,80,80,0.12);color:#ff7b7b}
+    .fade-in{animation:fadeIn .35s ease both}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    @media (max-width:640px){.modal{width:92%}.controls{flex-wrap:wrap}input[type=search]{width:100%}}
+    .btn-animated{transition:transform .12s ease}
+    .btn-animated:active{transform:translateY(2px) scale(.995)}
+    .empty{padding:40px;text-align:center;color:var(--muted)}
+    .small{font-size:12px;color:var(--muted)}
+    .export-import{display:flex;gap:8px}
+  </style>
 </head>
 <body>
     <div class="wrap">
@@ -13,7 +51,7 @@
         <input id="search" type="search" placeholder="Recherche: nom, email, matricule..." />
         <select id="filterClass"><option value="">Filtrer par classe</option></select>
         <select id="filterGender"><option value="">Tous genres</option><option value="M">Masculin</option><option value="F">Féminin</option></select>
-        <button id="btnAdd" class="btn-animated btn-primary">Ajouter étudiant</button>
+        <button id="btnAdd" class="btn-animated btn-primary">Ajouter Étudiant</button>
       </div>
     </header>
 
@@ -21,8 +59,8 @@
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="small">Double-clique sur une ligne pour éditer • Cliquer sur entêtes pour trier</div>
         <div class="export-import">
-          <button id="btnExport">Exporter JSON</button>
-          <button id="btnImport">Importer JSON</button>
+          <button id="btnExport">Exporter Étudiant</button>
+          <button id="btnImport">Importer Étudiant</button>
           <input id="importFile" type="file" accept="application/json" style="display:none" />
         </div>
       </div>
@@ -35,7 +73,7 @@
 
   <div id="modalBack" class="modal-back" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true">
-      <h3 id="modalTitle">Ajouter étudiant</h3>
+      <h3 id="modalTitle">Ajouter Étudiant</h3>
       <form id="studentForm">
         <div class="form-row">
           <div>
