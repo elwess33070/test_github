@@ -7,7 +7,7 @@
     <style>
     :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass: rgba(255,255,255,0.03)}
     *{box-sizing:border-box;font-family:Inter, system-ui, Arial}
-    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071126 0%, #0b1220 100%);color:#e6eef6;padding:28px}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#142a5b 0%, #0b1220 100%);color:#e6eef6;padding:28px}
     .wrap{max-width:1000px;margin:0 auto}
     header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
     h1{font-size:20px;margin:0}
@@ -246,6 +246,72 @@
         studentForm.reset(); editId=null;
       }
     }
+    function openAdd(){
+      modalTitle.textContent = 'Ajouter étudiant';
+      openModal(true);
+    }
+    function openEdit(id){
+      const s = students.find(x=>x.id===id); if(!s) return;
+      modalTitle.textContent = 'Modifier étudiant';
+      editId = id;
+      fName.value = s.name; fMatr.value = s.matr; fEmail.value = s.email; fAge.value = s.age; fGender.value = s.gender; fClasse.value = s.classe;
+      openModal(true);
+    }
+    function openView(id){
+      const s = students.find(x=>x.id===id); if(!s) return;
+      alert(`Nom: ${s.name}\nMatricule: ${s.matr}\nEmail: ${s.email}\nAge: ${s.age}\nGenre: ${s.gender}\nClasse: ${s.classe}`);
+    }
+
+    function doDelete(id){
+      if(!confirm('Supprimer cet étudiant ?')) return;
+      students = students.filter(s=>s.id!==id); save(); render();
+    }
+
+    studentForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const payload = {
+        name: fName.value.trim(),
+        matr: fMatr.value.trim(),
+        email: fEmail.value.trim(),
+        age: Number(fAge.value),
+        gender: fGender.value,
+        classe: fClasse.value.trim()
+      };
+      if(editId){
+        const idx = students.findIndex(s=>s.id===editId);
+        if(idx!==-1){ students[idx] = {...students[idx], ...payload}; }
+      } else {
+        students.push({...payload, id: uid()});
+      }
+      save(); openModal(false); render();
+    });
+
+    btnAdd.addEventListener('click', ()=>{ openAdd(); });
+    btnCancel.addEventListener('click', ()=>{ openModal(false); });
+    modalBack.addEventListener('click', (e)=>{ if(e.target===modalBack) openModal(false); });
+
+    [searchInput, filterClass, filterGender].forEach(el=>el.addEventListener('input', ()=>render()));
+
+    btnExport.addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(students, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download = 'students.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+    btnImport.addEventListener('click', ()=>importFile.click());
+    importFile.addEventListener('change', (ev)=>{
+      const f = ev.target.files[0]; if(!f) return;
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        try{ const data = JSON.parse(reader.result); if(Array.isArray(data)) { students = data.map(d=>({id:d.id||uid(), name:d.name||'',matr:d.matr||'',email:d.email||'',age:d.age||0,gender:d.gender||'M',classe:d.classe||''})); save(); render(); alert('Import OK') } else alert('Fichier non valide') }catch(e){alert('Erreur import')}
+      };
+      reader.readAsText(f);
+    });
+
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] }); }
+
+    seedIfEmpty(); render();
+
+    window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='n' && !e.metaKey && !e.ctrlKey && !e.altKey){ openAdd(); } });
   </script>
 </body>
 </html>

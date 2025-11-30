@@ -10,3 +10,7 @@ La principale difficulté rencontrée a été de trouver un style adéquat qui r
 -3ème commit : declaration de toutes les constantes pour js et initialisation des fonctions.
 
 - 4ème commit : Ajout des fonctions render et openModal.
+
+- 5ème commit : fin du projet. 
+
+Le principal défi a été d’identifier une interface optimale : un design clair, moderne et intuitif, capable de faciliter la gestion des étudiants tout en conservant une cohérence entre mobile et desktop. Le projet a également été l’occasion de découvrir les notions de UI/UX et de comprendre leur rôle essentiel dans la création d’expériences fluides et agréables pour l’utilisateur. La sauvegarde locale a été assurée via une interaction directe avec le DOM : chaque modification du tableau (ajout, suppression, édition) met à jour la structure JavaScript, ensuite enregistrée dans le localStorage afin de restaurer automatiquement les données au rechargement de la page, sans recours à un serveur externe.
